@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-c
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-c
+  template:
+    metadata:
+      labels:
+        app: service-c
+    spec:
+      containers:
+      - name: service-c
+        image: ${IMAGE_REGISTRY}/service-c:latest
+        env:
+        - name: ROUTING_UNIT
+          value: "unit-1"
+        - name: ROUTING_IDC
+          value: "idc-1"
+        - name: ROUTING_USER
+          value: "user-1"
+        - name: NACOS_ADDR
+          value: "nacos:8848"
+        - name: HTTP_PORT
+          value: "8083"
+        - name: GRPC_PORT
+          value: "9093"
+        ports:
+        - containerPort: 8083
+          name: http
+        - containerPort: 9093
+          name: grpc
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8083
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8083
+          initialDelaySeconds: 60
+          periodSeconds: 15

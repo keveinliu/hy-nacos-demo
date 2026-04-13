@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-b
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-b
+  template:
+    metadata:
+      labels:
+        app: service-b
+    spec:
+      containers:
+      - name: service-b
+        image: ${IMAGE_REGISTRY}/service-b:latest
+        env:
+        - name: ROUTING_UNIT
+          value: "unit-1"
+        - name: ROUTING_IDC
+          value: "idc-1"
+        - name: ROUTING_USER
+          value: "user-1"
+        - name: NACOS_ADDR
+          value: "nacos:8848"
+        - name: HTTP_PORT
+          value: "8082"
+        - name: GRPC_PORT
+          value: "9092"
+        ports:
+        - containerPort: 8082
+          name: http
+        - containerPort: 9092
+          name: grpc
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 60
+          periodSeconds: 15

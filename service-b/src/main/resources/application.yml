@@ -1,0 +1,24 @@
+server:
+  port: ${HTTP_PORT:8082}
+
+spring:
+  application:
+    name: service-b
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        metadata:
+          unit: ${ROUTING_UNIT:}
+          idc: ${ROUTING_IDC:}
+          user: ${ROUTING_USER:}
+    compatibility-verifier:
+      enabled: false
+
+grpc:
+  server:
+    port: ${GRPC_PORT:9092}
+  client:
+    service-c:
+      address: discovery:///service-c
+      negotiation-type: plaintext

@@ -1,0 +1,20 @@
+server:
+  port: ${HTTP_PORT:8083}
+
+spring:
+  application:
+    name: service-c
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        metadata:
+          unit: ${ROUTING_UNIT:}
+          idc: ${ROUTING_IDC:}
+          user: ${ROUTING_USER:}
+    compatibility-verifier:
+      enabled: false
+
+grpc:
+  server:
+    port: ${GRPC_PORT:9093}
