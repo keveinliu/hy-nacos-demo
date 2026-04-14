@@ -15,6 +15,8 @@ RUN mvn dependency:go-offline -pl common,service-b -am -q 2>/dev/null || true
 COPY common/src common/src
 COPY service-b/src service-b/src
 
+RUN find /workspace -path "*/protoc-plugins/*.exe" -exec chmod +x {} \;
+
 RUN mvn clean package -pl common,service-b -am -DskipTests -q
 
 FROM eclipse-temurin:17-jre-alpine AS runtime
