@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: service-b
-        image: ${IMAGE_REGISTRY}/service-b:latest
+        image: nacos-service:0.1
+        args: ["service-b.jar"]
         env:
         - name: ROUTING_UNIT
           value: "unit-1"
