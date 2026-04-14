@@ -17,14 +17,14 @@ COPY service-b/src service-b/src
 
 RUN mvn clean package -pl common,service-b -am -DskipTests -q
 
-FROM eclipse-temurin:17-jre-alpine AS runtime
+FROM eclipse-temurin:17-jre AS runtime
 
-RUN apk add --no-cache curl tzdata \
+RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
-    && apk del tzdata
+    && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 WORKDIR /app
 
