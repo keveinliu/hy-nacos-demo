@@ -6,6 +6,7 @@ cd "$SCRIPT_DIR"
 
 echo "==> Step 1: Compile with Maven in Docker (requires Docker)"
 docker run --rm \
+  --security-opt seccomp=unconfined \
   -v "$SCRIPT_DIR":/workspace \
   -v "$HOME/.m2":/root/.m2 \
   -w /workspace \
