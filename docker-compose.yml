@@ -24,10 +24,8 @@ services:
       - demo-net
 
   service-c:
-    build:
-      context: .
-      dockerfile: service-c/Dockerfile
-    image: hy-nacos-demo/service-c:latest
+    image: nacos-service:0.1
+    command: service-c.jar
     container_name: service-c
     environment:
       - ROUTING_UNIT=${ROUTING_UNIT:-unit-1}
@@ -53,10 +51,8 @@ services:
       - demo-net
 
   service-b:
-    build:
-      context: .
-      dockerfile: service-b/Dockerfile
-    image: hy-nacos-demo/service-b:latest
+    image: nacos-service:0.1
+    command: service-b.jar
     container_name: service-b
     environment:
       - ROUTING_UNIT=${ROUTING_UNIT:-unit-1}
@@ -84,10 +80,8 @@ services:
       - demo-net
 
   service-a:
-    build:
-      context: .
-      dockerfile: service-a/Dockerfile
-    image: hy-nacos-demo/service-a:latest
+    image: nacos-service:0.1
+    command: service-a.jar
     container_name: service-a
     environment:
       - ROUTING_UNIT=${ROUTING_UNIT:-unit-1}

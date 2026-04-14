@@ -14,10 +14,8 @@ docker run --rm \
   maven:3.9-eclipse-temurin-17 \
   mvn clean package -DskipTests -q
 
-echo "==> Step 2: Build Docker images"
-docker build -t service-a:0.1 -f service-a/Dockerfile .
-docker build -t service-b:0.1 -f service-b/Dockerfile .
-docker build -t service-c:0.1 -f service-c/Dockerfile .
+echo "==> Step 2: Build unified Docker image"
+docker build -t nacos-service:0.1 .
 
-echo "==> Done. Images built:"
-docker images | grep -E "service-[abc]"
+echo "==> Done."
+docker images nacos-service
