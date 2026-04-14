@@ -1,0 +1,10 @@
+.git
+.gitignore
+.sisyphus
+*/target
+*/.settings
+*/.classpath
+*/.project
+k8s
+README.md
+*.md
