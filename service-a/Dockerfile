@@ -1,8 +1,6 @@
-FROM eclipse-temurin:17-jdk AS builder
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /workspace
-
-RUN apt-get update && apt-get install -y --no-install-recommends maven && rm -rf /var/lib/apt/lists/*
 
 COPY pom.xml .
 COPY common/pom.xml common/
