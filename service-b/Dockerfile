@@ -1,8 +1,8 @@
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /workspace
 
-RUN apk add --no-cache maven
+RUN apt-get update && apt-get install -y --no-install-recommends maven && rm -rf /var/lib/apt/lists/*
 
 COPY pom.xml .
 COPY common/pom.xml common/
@@ -14,8 +14,6 @@ RUN mvn dependency:go-offline -pl common,service-b -am -q 2>/dev/null || true
 
 COPY common/src common/src
 COPY service-b/src service-b/src
-
-RUN find /workspace -path "*/protoc-plugins/*.exe" -exec chmod +x {} \;
 
 RUN mvn clean package -pl common,service-b -am -DskipTests -q
 
