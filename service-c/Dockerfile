@@ -2,6 +2,8 @@ FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /workspace
 
+ENV MAVEN_OPTS="-Xmx512m -Xms256m -XX:+UseSerialGC"
+
 COPY pom.xml .
 COPY common/pom.xml common/
 COPY service-a/pom.xml service-a/
