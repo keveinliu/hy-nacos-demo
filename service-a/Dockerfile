@@ -1,23 +1,4 @@
-FROM maven:3.9-eclipse-temurin-17 AS builder
-
-WORKDIR /workspace
-
-ENV MAVEN_OPTS="-Xmx512m -Xms256m -XX:+UseSerialGC"
-
-COPY pom.xml .
-COPY common/pom.xml common/
-COPY service-a/pom.xml service-a/
-COPY service-b/pom.xml service-b/
-COPY service-c/pom.xml service-c/
-
-RUN mvn dependency:go-offline -pl common,service-a -am -q 2>/dev/null || true
-
-COPY common/src common/src
-COPY service-a/src service-a/src
-
-RUN mvn clean package -pl common,service-a -am -DskipTests -q
-
-FROM eclipse-temurin:17-jre AS runtime
+FROM eclipse-temurin:17-jre
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
@@ -28,7 +9,7 @@ RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 WORKDIR /app
 
-COPY --from=builder /workspace/service-a/target/service-a-1.0-SNAPSHOT.jar app.jar
+COPY service-a/target/service-a-1.0-SNAPSHOT.jar app.jar
 
 USER appuser
 
