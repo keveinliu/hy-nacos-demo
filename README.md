@@ -66,13 +66,33 @@ ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 ROUTING_USER=user-1 \
 
 ## 方式二：Docker 镜像构建
 
-Dockerfile 采用**宿主机编译 + 容器打包**方式：编译在宿主机完成，Docker 只负责将 jar 打入镜像。这样可以避免部分 Linux 环境下 Docker builder 对 JVM 线程创建的 seccomp 限制。
+Dockerfile 采用**容器内编译 + 容器打包**两步方式，无需宿主机安装 JDK 17，避免 Linux 环境下 seccomp 限制导致 JVM 无法在 Docker build 时启动的问题。
 
-### 步骤1：宿主机编译 jar
+### 一键构建脚本（推荐）
 
 ```bash
-mvn clean package -DskipTests
+bash build.sh
 ```
+
+脚本会自动完成：用 Docker 容器编译 jar → 构建三个服务镜像。
+
+---
+
+### 手动分步执行
+
+#### 步骤1：用 Docker 容器编译 jar（不依赖宿主机 JDK 版本）
+
+```bash
+docker run --rm \
+  -v "$(pwd)":/workspace \
+  -v "$HOME/.m2":/root/.m2 \
+  -w /workspace \
+  -e MAVEN_OPTS="-Xmx512m -Xms256m -XX:+UseSerialGC" \
+  maven:3.9-eclipse-temurin-17 \
+  mvn clean package -DskipTests -q
+```
+
+> `-v "$HOME/.m2":/root/.m2` 挂载本地 Maven 仓库缓存，避免每次重复下载依赖。
 
 编译完成后各服务的 jar 位于：
 
@@ -82,12 +102,11 @@ service-b/target/service-b-1.0-SNAPSHOT.jar
 service-c/target/service-c-1.0-SNAPSHOT.jar
 ```
 
-### 步骤2：构建 Docker 镜像
+#### 步骤2：构建 Docker 镜像
 
 **注意**：`docker build` 的 context 必须是项目根目录（`.`），因为 Dockerfile 中的 COPY 路径以根目录为基准。
 
 ```bash
-# 构建三个服务镜像
 docker build -t service-a:0.1 -f service-a/Dockerfile .
 docker build -t service-b:0.1 -f service-b/Dockerfile .
 docker build -t service-c:0.1 -f service-c/Dockerfile .
