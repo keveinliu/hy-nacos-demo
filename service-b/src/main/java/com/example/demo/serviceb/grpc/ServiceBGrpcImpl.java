@@ -6,6 +6,7 @@ import com.example.demo.grpc.ServiceCGrpc;
 import com.example.demo.grpc.ServiceRequest;
 import com.example.demo.grpc.ServiceResponse;
 import io.grpc.Context;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -27,16 +28,20 @@ public class ServiceBGrpcImpl extends ServiceBGrpc.ServiceBImplBase {
 
         log.info("ServiceB.process: name={}, unit={}, idc={}", request.getName(), unit, idc);
 
-        // Call Service C — HeaderPropagationClientInterceptor auto-attaches routing headers
-        ServiceResponse cResponse = serviceCStub.process(request);
+        try {
+            ServiceResponse cResponse = serviceCStub.process(request);
 
-        ServiceResponse response = ServiceResponse.newBuilder()
-                .setMessage("[B received] -> " + cResponse.getMessage())
-                .setFromService("service-b")
-                .setTrace("B -> " + cResponse.getTrace())
-                .build();
+            ServiceResponse response = ServiceResponse.newBuilder()
+                    .setMessage("[B received] -> " + cResponse.getMessage())
+                    .setFromService("service-b")
+                    .setTrace("B -> " + cResponse.getTrace())
+                    .build();
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (StatusRuntimeException e) {
+            log.warn("ServiceB: downstream call failed: {}", e.getStatus());
+            responseObserver.onError(e);
+        }
     }
 }

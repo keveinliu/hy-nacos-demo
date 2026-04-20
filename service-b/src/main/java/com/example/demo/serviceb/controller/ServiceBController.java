@@ -5,6 +5,8 @@ import com.example.demo.grpc.ServiceCGrpc;
 import com.example.demo.grpc.ServiceRequest;
 import com.example.demo.grpc.ServiceResponse;
 import io.grpc.Context;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,13 @@ public class ServiceBController {
         try {
             ServiceRequest grpcRequest = ServiceRequest.newBuilder().setName(name).build();
             cResponse = serviceCStub.process(grpcRequest);
+        } catch (StatusRuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getStatus().getDescription());
+            error.put("grpcStatus", e.getStatus().getCode().name());
+            HttpStatus httpStatus = e.getStatus().getCode() == Status.Code.PERMISSION_DENIED
+                    ? HttpStatus.FORBIDDEN : HttpStatus.BAD_GATEWAY;
+            return ResponseEntity.status(httpStatus).body(error);
         } finally {
             ctx.detach(previousCtx);
         }
