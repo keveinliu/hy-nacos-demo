@@ -11,7 +11,6 @@ spring:
         metadata:
           unit: ${ROUTING_UNIT:}
           idc: ${ROUTING_IDC:}
-          user: ${ROUTING_USER:}
     compatibility-verifier:
       enabled: false
 

@@ -29,16 +29,13 @@ class HeaderPropagationServerInterceptorTest {
         Metadata headers = new Metadata();
         headers.put(RoutingContext.UNIT_METADATA_KEY, "unit-1");
         headers.put(RoutingContext.IDC_METADATA_KEY, "idc-1");
-        headers.put(RoutingContext.USER_METADATA_KEY, "user-1");
 
         AtomicReference<String> capturedUnit = new AtomicReference<>();
         AtomicReference<String> capturedIdc = new AtomicReference<>();
-        AtomicReference<String> capturedUser = new AtomicReference<>();
 
         ServerCallHandler<Object, Object> capturingHandler = (call, hdrs) -> {
             capturedUnit.set(RoutingContext.UNIT_CTX_KEY.get(Context.current()));
             capturedIdc.set(RoutingContext.IDC_CTX_KEY.get(Context.current()));
-            capturedUser.set(RoutingContext.USER_CTX_KEY.get(Context.current()));
             return new ServerCall.Listener<Object>() {};
         };
 
@@ -46,7 +43,6 @@ class HeaderPropagationServerInterceptorTest {
 
         assertEquals("unit-1", capturedUnit.get());
         assertEquals("idc-1", capturedIdc.get());
-        assertEquals("user-1", capturedUser.get());
     }
 
     @Test

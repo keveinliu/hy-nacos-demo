@@ -27,9 +27,8 @@ public class ServiceCController {
 
         String unit = request.getHeader(RoutingContext.UNIT_HEADER);
         String idc  = request.getHeader(RoutingContext.IDC_HEADER);
-        String user = request.getHeader(RoutingContext.USER_HEADER);
 
-        log.info("ServiceC HTTP: name={}, unit={}, idc={}, user={}", name, unit, idc, user);
+        log.info("ServiceC HTTP: name={}, unit={}, idc={}", name, unit, idc);
 
         String serviceUnit = System.getenv("ROUTING_UNIT");
         if (unit != null && !unit.isEmpty() && serviceUnit != null && !serviceUnit.isEmpty()
@@ -45,7 +44,6 @@ public class ServiceCController {
         result.put("trace", "C");
         result.put("routingUnit", unit != null ? unit : "");
         result.put("routingIdc", idc != null ? idc : "");
-        result.put("routingUser", user != null ? user : "");
         return ResponseEntity.ok(result);
     }
 
@@ -55,7 +53,6 @@ public class ServiceCController {
         info.put("service", "service-c");
         info.put("unit", System.getenv().getOrDefault("ROUTING_UNIT", ""));
         info.put("idc",  System.getenv().getOrDefault("ROUTING_IDC", ""));
-        info.put("user", System.getenv().getOrDefault("ROUTING_USER", ""));
         return ResponseEntity.ok(info);
     }
 }

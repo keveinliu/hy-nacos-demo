@@ -50,15 +50,15 @@ mvn clean package -DskipTests
 
 ```bash
 # 终端1 - Service C（叶子服务，先启动）
-ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 ROUTING_USER=user-1 \
+ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 \
   java -jar service-c/target/service-c-1.0-SNAPSHOT.jar
 
 # 终端2 - Service B
-ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 ROUTING_USER=user-1 \
+ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 \
   java -jar service-b/target/service-b-1.0-SNAPSHOT.jar
 
 # 终端3 - Service A（入口服务，最后启动）
-ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 ROUTING_USER=user-1 \
+ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 \
   java -jar service-a/target/service-a-1.0-SNAPSHOT.jar
 ```
 
@@ -135,7 +135,7 @@ docker-compose up
 
 ```bash
 # 使用 docker-compose 启动（会自动 build 镜像）
-ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 ROUTING_USER=user-1 \
+ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 \
   docker-compose up
 ```
 
@@ -155,7 +155,6 @@ docker-compose up
 ```bash
 curl -H "x-routing-unit: unit-1" \
      -H "x-routing-idc: idc-1" \
-     -H "x-routing-user: user-1" \
      "http://localhost:8081/api/greeting?name=test"
 ```
 
@@ -174,7 +173,7 @@ curl "http://localhost:8081/api/greeting?name=test"
 # 预期返回 200，无 unit 校验
 ```
 
-### 查看 Nacos 注册信息（验证 unit/idc/user metadata）
+### 查看 Nacos 注册信息（验证 unit/idc metadata）
 
 ```bash
 curl "http://localhost:8848/nacos/v1/ns/instance/list?serviceName=service-a"
@@ -188,7 +187,6 @@ curl "http://localhost:8848/nacos/v1/ns/instance/list?serviceName=service-a"
 |--------|------|--------|
 | `ROUTING_UNIT` | 单元标签，用于流量拒绝匹配 | 空（不校验） |
 | `ROUTING_IDC` | 机房标签，仅透传不校验 | 空 |
-| `ROUTING_USER` | 用户标签，仅透传不校验 | 空 |
 | `NACOS_ADDR` | Nacos 服务地址 | `127.0.0.1:8848` |
 | `HTTP_PORT` | HTTP 监听端口 | `8081` / `8082` / `8083` |
 | `GRPC_PORT` | gRPC 监听端口 | `9091` / `9092` / `9093` |

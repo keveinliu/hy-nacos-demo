@@ -22,8 +22,6 @@ spec:
           value: "unit-1"
         - name: ROUTING_IDC
           value: "idc-1"
-        - name: ROUTING_USER
-          value: "user-1"
         - name: NACOS_ADDR
           value: "nacos:8848"
         - name: HTTP_PORT

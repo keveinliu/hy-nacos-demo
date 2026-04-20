@@ -24,9 +24,8 @@ public class ServiceBGrpcImpl extends ServiceBGrpc.ServiceBImplBase {
     public void process(ServiceRequest request, StreamObserver<ServiceResponse> responseObserver) {
         String unit = RoutingContext.UNIT_CTX_KEY.get(Context.current());
         String idc  = RoutingContext.IDC_CTX_KEY.get(Context.current());
-        String user = RoutingContext.USER_CTX_KEY.get(Context.current());
 
-        log.info("ServiceB.process: name={}, unit={}, idc={}, user={}", request.getName(), unit, idc, user);
+        log.info("ServiceB.process: name={}, unit={}, idc={}", request.getName(), unit, idc);
 
         // Call Service C — HeaderPropagationClientInterceptor auto-attaches routing headers
         ServiceResponse cResponse = serviceCStub.process(request);

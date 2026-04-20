@@ -31,14 +31,12 @@ public class HeaderPropagationServerInterceptor implements ServerInterceptor {
 
         String unit = headers.get(RoutingContext.UNIT_METADATA_KEY);
         String idc = headers.get(RoutingContext.IDC_METADATA_KEY);
-        String user = headers.get(RoutingContext.USER_METADATA_KEY);
 
-        log.debug("HeaderPropagationServer: unit={}, idc={}, user={}", unit, idc, user);
+        log.debug("HeaderPropagationServer: unit={}, idc={}", unit, idc);
 
         Context ctx = Context.current()
                 .withValue(RoutingContext.UNIT_CTX_KEY, unit)
-                .withValue(RoutingContext.IDC_CTX_KEY, idc)
-                .withValue(RoutingContext.USER_CTX_KEY, user);
+                .withValue(RoutingContext.IDC_CTX_KEY, idc);
 
         return Contexts.interceptCall(ctx, call, headers, next);
     }

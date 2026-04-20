@@ -35,9 +35,8 @@ public class ServiceBController {
 
         String unit = request.getHeader(RoutingContext.UNIT_HEADER);
         String idc  = request.getHeader(RoutingContext.IDC_HEADER);
-        String user = request.getHeader(RoutingContext.USER_HEADER);
 
-        log.info("ServiceB HTTP: name={}, unit={}, idc={}, user={}", name, unit, idc, user);
+        log.info("ServiceB HTTP: name={}, unit={}, idc={}", name, unit, idc);
 
         String serviceUnit = System.getenv("ROUTING_UNIT");
         if (unit != null && !unit.isEmpty() && serviceUnit != null && !serviceUnit.isEmpty()
@@ -50,8 +49,7 @@ public class ServiceBController {
         // Bridge HTTP context to gRPC Context for downstream call
         Context ctx = Context.current()
                 .withValue(RoutingContext.UNIT_CTX_KEY, unit)
-                .withValue(RoutingContext.IDC_CTX_KEY, idc)
-                .withValue(RoutingContext.USER_CTX_KEY, user);
+                .withValue(RoutingContext.IDC_CTX_KEY, idc);
         Context previousCtx = ctx.attach();
         ServiceResponse cResponse;
         try {
@@ -67,7 +65,6 @@ public class ServiceBController {
         result.put("trace", "B -> " + cResponse.getTrace());
         result.put("routingUnit", unit != null ? unit : "");
         result.put("routingIdc", idc != null ? idc : "");
-        result.put("routingUser", user != null ? user : "");
         return ResponseEntity.ok(result);
     }
 
@@ -77,7 +74,6 @@ public class ServiceBController {
         info.put("service", "service-b");
         info.put("unit", System.getenv().getOrDefault("ROUTING_UNIT", ""));
         info.put("idc",  System.getenv().getOrDefault("ROUTING_IDC", ""));
-        info.put("user", System.getenv().getOrDefault("ROUTING_USER", ""));
         return ResponseEntity.ok(info);
     }
 }

@@ -53,8 +53,7 @@ class HeaderPropagationClientInterceptorTest {
 
         Context ctx = Context.current()
                 .withValue(RoutingContext.UNIT_CTX_KEY, "unit-1")
-                .withValue(RoutingContext.IDC_CTX_KEY, "idc-1")
-                .withValue(RoutingContext.USER_CTX_KEY, "user-1");
+                .withValue(RoutingContext.IDC_CTX_KEY, "idc-1");
 
         ctx.run(() -> {
             ClientCall<Object, Object> call = interceptor.interceptCall(TEST_METHOD, CallOptions.DEFAULT, mockChannel);
@@ -65,7 +64,6 @@ class HeaderPropagationClientInterceptorTest {
         assertNotNull(outgoing);
         assertEquals("unit-1", outgoing.get(RoutingContext.UNIT_METADATA_KEY));
         assertEquals("idc-1", outgoing.get(RoutingContext.IDC_METADATA_KEY));
-        assertEquals("user-1", outgoing.get(RoutingContext.USER_METADATA_KEY));
     }
 
     @Test
@@ -91,6 +89,5 @@ class HeaderPropagationClientInterceptorTest {
         assertNotNull(outgoing);
         assertNull(outgoing.get(RoutingContext.UNIT_METADATA_KEY));
         assertNull(outgoing.get(RoutingContext.IDC_METADATA_KEY));
-        assertNull(outgoing.get(RoutingContext.USER_METADATA_KEY));
     }
 }

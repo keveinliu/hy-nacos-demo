@@ -19,9 +19,8 @@ public class ServiceCGrpcImpl extends ServiceCGrpc.ServiceCImplBase {
     public void process(ServiceRequest request, StreamObserver<ServiceResponse> responseObserver) {
         String unit = RoutingContext.UNIT_CTX_KEY.get(Context.current());
         String idc  = RoutingContext.IDC_CTX_KEY.get(Context.current());
-        String user = RoutingContext.USER_CTX_KEY.get(Context.current());
 
-        log.info("ServiceC.process: name={}, unit={}, idc={}, user={}", request.getName(), unit, idc, user);
+        log.info("ServiceC.process: name={}, unit={}, idc={}", request.getName(), unit, idc);
 
         ServiceResponse response = ServiceResponse.newBuilder()
                 .setMessage("Hello from Service C, name=" + request.getName())

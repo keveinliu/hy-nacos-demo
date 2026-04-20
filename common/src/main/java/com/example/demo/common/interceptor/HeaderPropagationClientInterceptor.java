@@ -36,18 +36,14 @@ public class HeaderPropagationClientInterceptor implements ClientInterceptor {
             public void start(Listener<RespT> responseListener, Metadata headers) {
                 String unit = RoutingContext.UNIT_CTX_KEY.get(Context.current());
                 String idc = RoutingContext.IDC_CTX_KEY.get(Context.current());
-                String user = RoutingContext.USER_CTX_KEY.get(Context.current());
 
-                log.debug("HeaderPropagationClient: unit={}, idc={}, user={}", unit, idc, user);
+                log.debug("HeaderPropagationClient: unit={}, idc={}", unit, idc);
 
                 if (unit != null) {
                     headers.put(RoutingContext.UNIT_METADATA_KEY, unit);
                 }
                 if (idc != null) {
                     headers.put(RoutingContext.IDC_METADATA_KEY, idc);
-                }
-                if (user != null) {
-                    headers.put(RoutingContext.USER_METADATA_KEY, user);
                 }
 
                 super.start(responseListener, headers);
