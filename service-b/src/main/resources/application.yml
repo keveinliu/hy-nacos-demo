@@ -8,6 +8,7 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        port: ${GRPC_PORT:9092}
         metadata:
           unit: ${ROUTING_UNIT:}
           idc: ${ROUTING_IDC:}
