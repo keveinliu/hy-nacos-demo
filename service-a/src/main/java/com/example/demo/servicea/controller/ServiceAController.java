@@ -1,13 +1,12 @@
 package com.example.demo.servicea.controller;
 
-import com.example.demo.common.routing.RoutingContext;
-import com.example.demo.grpc.ServiceBGrpc;
-import com.example.demo.grpc.ServiceRequest;
-import com.example.demo.grpc.ServiceResponse;
-import io.grpc.Context;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-import net.devh.boot.grpc.client.inject.GrpcClient;
+import com.example.demo.common.api.ServiceBApi;
+import com.example.demo.common.api.ServiceRequest;
+import com.example.demo.common.api.ServiceResponse;
+import com.example.demo.common.routing.RoutingConstants;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.rpc.RpcContext;
+import org.apache.dubbo.rpc.RpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,17 +26,16 @@ public class ServiceAController {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceAController.class);
 
-    @GrpcClient("service-b")
-    private ServiceBGrpc.ServiceBBlockingStub serviceBStub;
+    @DubboReference(check = false)
+    private ServiceBApi serviceBApi;
 
     @GetMapping("/greeting")
     public ResponseEntity<Map<String, Object>> greeting(
             @RequestParam(defaultValue = "world") String name,
             HttpServletRequest request) {
 
-        String unit = request.getHeader(RoutingContext.UNIT_HEADER);
-        String idc  = request.getHeader(RoutingContext.IDC_HEADER);
-
+        String unit = request.getHeader(RoutingConstants.UNIT_KEY);
+        String idc = request.getHeader(RoutingConstants.IDC_KEY);
         log.info("ServiceA HTTP: name={}, unit={}, idc={}", name, unit, idc);
 
         String serviceUnit = System.getenv("ROUTING_UNIT");
@@ -48,32 +46,26 @@ public class ServiceAController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         }
 
-        Context ctx = Context.current()
-                .withValue(RoutingContext.UNIT_CTX_KEY, unit)
-                .withValue(RoutingContext.IDC_CTX_KEY, idc);
-        Context previousCtx = ctx.attach();
-        ServiceResponse bResponse;
-        try {
-            ServiceRequest grpcRequest = ServiceRequest.newBuilder().setName(name).build();
-            bResponse = serviceBStub.process(grpcRequest);
-        } catch (StatusRuntimeException e) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("error", e.getStatus().getDescription());
-            error.put("grpcStatus", e.getStatus().getCode().name());
-            HttpStatus httpStatus = e.getStatus().getCode() == Status.Code.PERMISSION_DENIED
-                    ? HttpStatus.FORBIDDEN : HttpStatus.BAD_GATEWAY;
-            return ResponseEntity.status(httpStatus).body(error);
-        } finally {
-            ctx.detach(previousCtx);
-        }
+        RpcContext.getContext().setAttachment(RoutingConstants.UNIT_KEY, unit);
+        RpcContext.getContext().setAttachment(RoutingConstants.IDC_KEY, idc);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("message", bResponse.getMessage());
-        result.put("fromService", "service-a -> " + bResponse.getFromService());
-        result.put("trace", "A -> " + bResponse.getTrace());
-        result.put("routingUnit", unit != null ? unit : "");
-        result.put("routingIdc", idc != null ? idc : "");
-        return ResponseEntity.ok(result);
+        try {
+            ServiceResponse bResponse = serviceBApi.process(new ServiceRequest(name));
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", bResponse.getMessage());
+            result.put("fromService", "service-a -> " + bResponse.getFromService());
+            result.put("trace", "A -> " + bResponse.getTrace());
+            result.put("routingUnit", unit != null ? unit : "");
+            result.put("routingIdc", idc != null ? idc : "");
+            return ResponseEntity.ok(result);
+        } catch (RpcException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            HttpStatus status = e.getCode() == RpcException.FORBIDDEN_EXCEPTION
+                    ? HttpStatus.FORBIDDEN : HttpStatus.BAD_GATEWAY;
+            return ResponseEntity.status(status).body(error);
+        }
     }
 
     @GetMapping("/info")
@@ -81,7 +73,7 @@ public class ServiceAController {
         Map<String, String> info = new HashMap<>();
         info.put("service", "service-a");
         info.put("unit", System.getenv().getOrDefault("ROUTING_UNIT", ""));
-        info.put("idc",  System.getenv().getOrDefault("ROUTING_IDC", ""));
+        info.put("idc", System.getenv().getOrDefault("ROUTING_IDC", ""));
         return ResponseEntity.ok(info);
     }
 }

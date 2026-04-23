@@ -4,20 +4,18 @@ server:
 spring:
   application:
     name: service-a
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
-        metadata:
-          unit: ${ROUTING_UNIT:}
-          idc: ${ROUTING_IDC:}
-    compatibility-verifier:
-      enabled: false
 
-grpc:
-  server:
-    port: ${GRPC_PORT:9091}
-  client:
-    service-b:
-      address: discovery:///service-b
-      negotiation-type: plaintext
+dubbo:
+  application:
+    name: service-a
+    metadata-type: local
+  protocol:
+    name: dubbo
+    port: ${DUBBO_PORT:20881}
+  registry:
+    address: nacos://${NACOS_ADDR:127.0.0.1:8848}
+    parameters:
+      unit: ${ROUTING_UNIT:}
+      idc: ${ROUTING_IDC:}
+  scan:
+    base-packages: com.example.demo.servicea.dubbo

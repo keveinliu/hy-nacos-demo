@@ -1,13 +1,11 @@
 package com.example.demo.servicea;
 
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.example.demo.servicea", "com.example.demo.common"})
+@EnableDubbo
 public class ServiceAApplication {
     public static void main(String[] args) {
         SpringApplication.run(ServiceAApplication.class, args);

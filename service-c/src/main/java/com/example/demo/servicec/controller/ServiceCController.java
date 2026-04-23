@@ -1,6 +1,6 @@
 package com.example.demo.servicec.controller;
 
-import com.example.demo.common.routing.RoutingContext;
+import com.example.demo.common.routing.RoutingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,16 +25,15 @@ public class ServiceCController {
             @RequestParam(defaultValue = "world") String name,
             HttpServletRequest request) {
 
-        String unit = request.getHeader(RoutingContext.UNIT_HEADER);
-        String idc  = request.getHeader(RoutingContext.IDC_HEADER);
-
+        String unit = request.getHeader(RoutingConstants.UNIT_KEY);
+        String idc = request.getHeader(RoutingConstants.IDC_KEY);
         log.info("ServiceC HTTP: name={}, unit={}, idc={}", name, unit, idc);
 
         String serviceUnit = System.getenv("ROUTING_UNIT");
         if (unit != null && !unit.isEmpty() && serviceUnit != null && !serviceUnit.isEmpty()
                 && !serviceUnit.equals(unit)) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "Unit mismatch: request unit=[" + unit + "], service unit=[" + serviceUnit + "]");
+            error.put("error", "Unit mismatch");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         }
 
@@ -42,8 +41,6 @@ public class ServiceCController {
         result.put("message", "Hello from Service C, name=" + name);
         result.put("fromService", "service-c");
         result.put("trace", "C");
-        result.put("routingUnit", unit != null ? unit : "");
-        result.put("routingIdc", idc != null ? idc : "");
         return ResponseEntity.ok(result);
     }
 
@@ -52,7 +49,7 @@ public class ServiceCController {
         Map<String, String> info = new HashMap<>();
         info.put("service", "service-c");
         info.put("unit", System.getenv().getOrDefault("ROUTING_UNIT", ""));
-        info.put("idc",  System.getenv().getOrDefault("ROUTING_IDC", ""));
+        info.put("idc", System.getenv().getOrDefault("ROUTING_IDC", ""));
         return ResponseEntity.ok(info);
     }
 }

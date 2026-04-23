@@ -1,0 +1,3 @@
+headerPropagationConsumer=com.example.demo.common.filter.HeaderPropagationConsumerFilter
+headerPropagationProvider=com.example.demo.common.filter.HeaderPropagationProviderFilter
+unitRouting=com.example.demo.common.filter.UnitRoutingFilter
