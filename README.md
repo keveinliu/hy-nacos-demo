@@ -1,10 +1,10 @@
-# hy-nacos-demo — 微服务Demo（SpringBoot + gRPC + Nacos）
+# hy-nacos-demo — 微服务 Demo（Spring Boot + Dubbo Triple + Nacos）
 
 ## 技术栈
 
 - **JDK**: 17
-- **SpringBoot**: 2.7.18
-- **gRPC**: 1.58.0 (via grpc-spring-boot-starter 2.15.0)
+- **Spring Boot**: 2.7.18
+- **Dubbo**: 3.0.15（Triple 协议，应用级注册）
 - **Nacos**: 2.2.3
 - **Spring Cloud Alibaba**: 2021.0.6.2
 
@@ -12,12 +12,13 @@
 
 ```
 hy-nacos-demo/
-├── common/                   # 共享 protobuf 定义、gRPC 拦截器
-├── service-a/                # 服务A (HTTP:8081, gRPC:9091)
+├── common/                   # 共享 Protobuf、Dubbo Filter、自定义 SPI 扩展
+│   └── metadata/EnvMetadataCustomizer.java   # 应用级注册 Nacos metadata 注入
+├── service-a/                # 服务A (HTTP:8081, Dubbo:20881)
 │   └── Dockerfile
-├── service-b/                # 服务B (HTTP:8082, gRPC:9092)
+├── service-b/                # 服务B (HTTP:8082, Dubbo:20882)
 │   └── Dockerfile
-├── service-c/                # 服务C (HTTP:8083, gRPC:9093)
+├── service-c/                # 服务C (HTTP:8083, Dubbo:20883)
 │   └── Dockerfile
 ├── k8s/                      # Kubernetes 部署 manifests
 ├── docker-compose.yml        # 完整服务栈（Nacos + 三个服务）
@@ -114,27 +115,22 @@ docker build -t nacos-service:0.1 .
 ```bash
 # 启动 Service C
 docker run -e ROUTING_UNIT=unit-1 -e NACOS_ADDR=<nacos-ip>:8848 \
-  -p 8083:8083 -p 9093:9093 nacos-service:0.1 service-c.jar
+  -p 8083:8083 -p 20883:20883 nacos-service:0.1 service-c.jar
 
 # 启动 Service B
 docker run -e ROUTING_UNIT=unit-1 -e NACOS_ADDR=<nacos-ip>:8848 \
-  -p 8082:8082 -p 9092:9092 nacos-service:0.1 service-b.jar
+  -p 8082:8082 -p 20882:20882 nacos-service:0.1 service-b.jar
 
 # 启动 Service A
 docker run -e ROUTING_UNIT=unit-1 -e NACOS_ADDR=<nacos-ip>:8848 \
-  -p 8081:8081 -p 9091:9091 nacos-service:0.1 service-a.jar
+  -p 8081:8081 -p 20881:20881 nacos-service:0.1 service-a.jar
 ```
+
+---
 
 ### 一键启动完整服务栈（docker-compose）
 
 ```bash
-docker-compose up
-```
-
-### 步骤3：一键启动完整服务栈
-
-```bash
-# 使用 docker-compose 启动（会自动 build 镜像）
 ROUTING_UNIT=unit-1 ROUTING_IDC=idc-1 \
   docker-compose up
 ```
@@ -179,6 +175,31 @@ curl "http://localhost:8081/api/greeting?name=test"
 curl "http://localhost:8848/nacos/v1/ns/instance/list?serviceName=service-a"
 ```
 
+在返回的 JSON 中，`hosts[0].metadata` 应包含：
+
+```json
+{
+  "unit": "unit-1",
+  "idc": "idc-1",
+  "protocol": "grpc",
+  "dubbo.endpoints": "[{\"port\":20881,\"protocol\":\"tri\"}]"
+}
+```
+
+---
+
+## 应用级注册与 Nacos Metadata
+
+本 Demo 采用 **Dubbo 3 应用级注册（Service Discovery）**。在此模式下，`dubbo.provider.parameters` 中的参数仅作用于接口级 URL，**不会自动写入 Nacos 实例的 metadata**。
+
+为此，项目通过 **Dubbo SPI 扩展 `ServiceInstanceCustomizer`** 实现了 `EnvMetadataCustomizer`（位于 `common` 模块），在服务实例注册到 Nacos 之前，将环境变量 `ROUTING_UNIT`、`ROUTING_IDC` 以及协议信息注入到实例 metadata 中。
+
+如需查看实现细节，参见：
+
+```
+common/src/main/java/com/example/demo/common/metadata/EnvMetadataCustomizer.java
+```
+
 ---
 
 ## 环境变量
@@ -189,15 +210,15 @@ curl "http://localhost:8848/nacos/v1/ns/instance/list?serviceName=service-a"
 | `ROUTING_IDC` | 机房标签，仅透传不校验 | 空 |
 | `NACOS_ADDR` | Nacos 服务地址 | `127.0.0.1:8848` |
 | `HTTP_PORT` | HTTP 监听端口 | `8081` / `8082` / `8083` |
-| `GRPC_PORT` | gRPC 监听端口 | `9091` / `9092` / `9093` |
+| `DUBBO_PORT` | Dubbo Triple 监听端口 | `20881` / `20882` / `20883` |
 
 ## 端口说明
 
-| 服务 | HTTP 端口 | gRPC 端口 |
-|------|-----------|-----------|
-| service-a | 8081 | 9091 |
-| service-b | 8082 | 9092 |
-| service-c | 8083 | 9093 |
+| 服务 | HTTP 端口 | Dubbo Triple 端口 |
+|------|-----------|-------------------|
+| service-a | 8081 | 20881 |
+| service-b | 8082 | 20882 |
+| service-c | 8083 | 20883 |
 | Nacos | 8848 | 9848 |
 
 ---
