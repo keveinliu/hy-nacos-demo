@@ -31,10 +31,18 @@
     <java.version>17</java.version>
     <dubbo.version>3.0.15</dubbo.version>
     <nacos-client.version>2.2.3</nacos-client.version>
+    <spring-framework.version>5.3.31</spring-framework.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring-framework.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.apache.dubbo</groupId>
         <artifactId>dubbo-bom</artifactId>
