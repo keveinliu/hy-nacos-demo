@@ -9,11 +9,13 @@ dubbo:
   application:
     name: service-b
     metadata-type: local
+    register-mode: interface
   protocol:
     name: dubbo
     port: ${DUBBO_PORT:20882}
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
+    register-mode: interface
     parameters:
       unit: ${ROUTING_UNIT:}
       idc: ${ROUTING_IDC:}
