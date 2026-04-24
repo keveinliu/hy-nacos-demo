@@ -8,14 +8,11 @@ spring:
 dubbo:
   application:
     name: service-c
-    metadata-type: local
-    register-mode: interface
   protocol:
     name: dubbo
     port: ${DUBBO_PORT:20883}
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
-    register-mode: interface
     parameters:
       unit: ${ROUTING_UNIT:}
       idc: ${ROUTING_IDC:}
