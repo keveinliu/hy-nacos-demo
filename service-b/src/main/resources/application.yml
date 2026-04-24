@@ -8,13 +8,15 @@ spring:
 dubbo:
   application:
     name: service-b
+    metadataServicePort: ${DUBBO_PORT:20882}
   protocol:
-    name: dubbo
+    name: tri
     port: ${DUBBO_PORT:20882}
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
     parameters:
       unit: ${ROUTING_UNIT:}
       idc: ${ROUTING_IDC:}
+      protocol: grpc
   scan:
     base-packages: com.example.demo.serviceb.dubbo

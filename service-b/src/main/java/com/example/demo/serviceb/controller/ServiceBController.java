@@ -1,8 +1,8 @@
 package com.example.demo.serviceb.controller;
 
 import com.example.demo.common.api.ServiceCApi;
-import com.example.demo.common.api.ServiceRequest;
-import com.example.demo.common.api.ServiceResponse;
+import com.example.demo.common.proto.ServiceRequest;
+import com.example.demo.common.proto.ServiceResponse;
 import com.example.demo.common.routing.RoutingConstants;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.rpc.RpcContext;
@@ -50,7 +50,8 @@ public class ServiceBController {
         RpcContext.getContext().setAttachment(RoutingConstants.IDC_KEY, idc);
 
         try {
-            ServiceResponse cResponse = serviceCApi.process(new ServiceRequest(name));
+            ServiceRequest req = ServiceRequest.newBuilder().setName(name).build();
+            ServiceResponse cResponse = serviceCApi.process(req);
             Map<String, String> result = new HashMap<>();
             result.put("message", "[B received] -> " + cResponse.getMessage());
             result.put("fromService", "service-b");

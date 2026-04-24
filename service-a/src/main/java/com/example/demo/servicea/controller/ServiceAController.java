@@ -1,8 +1,8 @@
 package com.example.demo.servicea.controller;
 
 import com.example.demo.common.api.ServiceBApi;
-import com.example.demo.common.api.ServiceRequest;
-import com.example.demo.common.api.ServiceResponse;
+import com.example.demo.common.proto.ServiceRequest;
+import com.example.demo.common.proto.ServiceResponse;
 import com.example.demo.common.routing.RoutingConstants;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.rpc.RpcContext;
@@ -50,7 +50,8 @@ public class ServiceAController {
         RpcContext.getContext().setAttachment(RoutingConstants.IDC_KEY, idc);
 
         try {
-            ServiceResponse bResponse = serviceBApi.process(new ServiceRequest(name));
+            ServiceRequest req = ServiceRequest.newBuilder().setName(name).build();
+            ServiceResponse bResponse = serviceBApi.process(req);
 
             Map<String, Object> result = new HashMap<>();
             result.put("message", bResponse.getMessage());

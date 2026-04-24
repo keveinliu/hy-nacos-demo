@@ -2,8 +2,8 @@ package com.example.demo.serviceb.dubbo;
 
 import com.example.demo.common.api.ServiceBApi;
 import com.example.demo.common.api.ServiceCApi;
-import com.example.demo.common.api.ServiceRequest;
-import com.example.demo.common.api.ServiceResponse;
+import com.example.demo.common.proto.ServiceRequest;
+import com.example.demo.common.proto.ServiceResponse;
 import com.example.demo.common.routing.RoutingConstants;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -27,10 +27,10 @@ public class ServiceBDubboImpl implements ServiceBApi {
 
         ServiceResponse cResponse = serviceCApi.process(request);
 
-        return new ServiceResponse(
-                "[B received] -> " + cResponse.getMessage(),
-                "service-b",
-                "B -> " + cResponse.getTrace()
-        );
+        return ServiceResponse.newBuilder()
+                .setMessage("[B received] -> " + cResponse.getMessage())
+                .setFromService("service-b")
+                .setTrace("B -> " + cResponse.getTrace())
+                .build();
     }
 }

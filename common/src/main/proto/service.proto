@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package common;
+option java_package = "com.example.demo.common.proto";
+option java_multiple_files = true;
+
+message ServiceRequest {
+  string name = 1;
+}
+
+message ServiceResponse {
+  string message = 1;
+  string from_service = 2;
+  string trace = 3;
+}
+
+service ServiceA {
+  rpc Greeting(ServiceRequest) returns (ServiceResponse);
+}
+
+service ServiceB {
+  rpc Process(ServiceRequest) returns (ServiceResponse);
+}
+
+service ServiceC {
+  rpc Process(ServiceRequest) returns (ServiceResponse);
+}

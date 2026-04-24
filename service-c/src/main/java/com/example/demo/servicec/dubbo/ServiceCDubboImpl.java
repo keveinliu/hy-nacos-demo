@@ -1,8 +1,8 @@
 package com.example.demo.servicec.dubbo;
 
 import com.example.demo.common.api.ServiceCApi;
-import com.example.demo.common.api.ServiceRequest;
-import com.example.demo.common.api.ServiceResponse;
+import com.example.demo.common.proto.ServiceRequest;
+import com.example.demo.common.proto.ServiceResponse;
 import com.example.demo.common.routing.RoutingConstants;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.dubbo.rpc.RpcContext;
@@ -20,10 +20,10 @@ public class ServiceCDubboImpl implements ServiceCApi {
         String idc = RpcContext.getContext().getAttachment(RoutingConstants.IDC_KEY);
         log.info("ServiceC.process: name={}, unit={}, idc={}", request.getName(), unit, idc);
 
-        return new ServiceResponse(
-                "Hello from Service C, name=" + request.getName(),
-                "service-c",
-                "C"
-        );
+        return ServiceResponse.newBuilder()
+                .setMessage("Hello from Service C, name=" + request.getName())
+                .setFromService("service-c")
+                .setTrace("C")
+                .build();
     }
 }

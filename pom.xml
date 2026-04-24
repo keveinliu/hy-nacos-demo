@@ -32,6 +32,7 @@
     <dubbo.version>3.0.15</dubbo.version>
     <nacos-client.version>2.2.3</nacos-client.version>
     <spring-framework.version>5.3.31</spring-framework.version>
+    <protobuf.version>3.21.12</protobuf.version>
   </properties>
 
   <dependencyManagement>
@@ -54,6 +55,11 @@
         <groupId>com.alibaba.nacos</groupId>
         <artifactId>nacos-client</artifactId>
         <version>${nacos-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
