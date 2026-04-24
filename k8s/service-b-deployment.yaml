@@ -26,13 +26,13 @@ spec:
           value: "nacos:8848"
         - name: HTTP_PORT
           value: "8082"
-        - name: GRPC_PORT
-          value: "9092"
+        - name: DUBBO_PORT
+          value: "20882"
         ports:
         - containerPort: 8082
           name: http
-        - containerPort: 9092
-          name: grpc
+        - containerPort: 20882
+          name: dubbo
         readinessProbe:
           httpGet:
             path: /actuator/health

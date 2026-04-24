@@ -10,6 +10,6 @@ spec:
   - name: http
     port: 8081
     targetPort: 8081
-  - name: grpc
-    port: 9091
-    targetPort: 9091
+  - name: dubbo
+    port: 20881
+    targetPort: 20881

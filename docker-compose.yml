@@ -32,10 +32,10 @@ services:
       - ROUTING_IDC=${ROUTING_IDC:-idc-1}
       - NACOS_ADDR=nacos:8848
       - HTTP_PORT=8083
-      - GRPC_PORT=9093
+      - DUBBO_PORT=20883
     ports:
       - "8083:8083"
-      - "9093:9093"
+      - "20883:20883"
     depends_on:
       nacos:
         condition: service_healthy
@@ -58,10 +58,10 @@ services:
       - ROUTING_IDC=${ROUTING_IDC:-idc-1}
       - NACOS_ADDR=nacos:8848
       - HTTP_PORT=8082
-      - GRPC_PORT=9092
+      - DUBBO_PORT=20882
     ports:
       - "8082:8082"
-      - "9092:9092"
+      - "20882:20882"
     depends_on:
       nacos:
         condition: service_healthy
@@ -86,10 +86,10 @@ services:
       - ROUTING_IDC=${ROUTING_IDC:-idc-1}
       - NACOS_ADDR=nacos:8848
       - HTTP_PORT=8081
-      - GRPC_PORT=9091
+      - DUBBO_PORT=20881
     ports:
       - "8081:8081"
-      - "9091:9091"
+      - "20881:20881"
     depends_on:
       nacos:
         condition: service_healthy

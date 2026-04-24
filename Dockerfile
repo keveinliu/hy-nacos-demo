@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata \
 
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
+RUN mkdir -p /home/appuser/.dubbo && \
+    chown -R appuser:appgroup /home/appuser/.dubbo
+
 WORKDIR /app
 
 COPY service-a/target/service-a-1.0-SNAPSHOT.jar service-a.jar
