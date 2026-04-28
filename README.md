@@ -169,6 +169,41 @@ curl "http://localhost:8081/api/greeting?name=test"
 # 预期返回 200，无 unit 校验
 ```
 
+### gRPC 直接调用（Triple 协议）
+
+由于本项目使用 Dubbo 3 Triple 的 **Java Interface Mode**，gRPC 服务名和方法名与 Java 接口保持一致，调用时需要提供 proto 文件以便 grpcurl 解析消息格式。
+
+```bash
+# 调用 Service A（完整链路 A → B → C）
+grpcurl -plaintext \
+  -proto ./common/src/main/proto/service.proto \
+  -d '{"name": "test"}' \
+  -H 'x-routing-unit: unit1' \
+  -H 'x-routing-idc: idc1' \
+  <service-a-pod-ip>:9091 \
+  com.example.demo.common.api.ServiceAApi/greeting
+
+# 调用 Service B
+grpcurl -plaintext \
+  -proto ./common/src/main/proto/service.proto \
+  -d '{"name": "test"}' \
+  -H 'x-routing-unit: unit1' \
+  -H 'x-routing-idc: idc1' \
+  <service-b-pod-ip>:9092 \
+  com.example.demo.common.api.ServiceBApi/process
+
+# 调用 Service C
+grpcurl -plaintext \
+  -proto ./common/src/main/proto/service.proto \
+  -d '{"name": "test"}' \
+  -H 'x-routing-unit: unit1' \
+  -H 'x-routing-idc: idc1' \
+  <service-c-pod-ip>:9093 \
+  com.example.demo.common.api.ServiceCApi/process
+```
+
+> **注意**：Dubbo Triple 在此模式下不将业务服务注册到标准 gRPC Server Reflection，因此 `grpcurl list` 只能看到 `grpc.health.v1.Health` 和 `grpc.reflection.v1alpha.ServerReflection`，看不到具体业务服务。必须通过 `-proto` 参数提供 proto 文件。
+
 ### 查看 Nacos 注册信息（验证 unit/idc metadata）
 
 ```bash
