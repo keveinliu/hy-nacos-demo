@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package common;
+package com.example.demo.common.api;
 option java_package = "com.example.demo.common.proto";
 option java_multiple_files = true;
 
@@ -14,14 +14,14 @@ message ServiceResponse {
   string trace = 3;
 }
 
-service ServiceA {
-  rpc Greeting(ServiceRequest) returns (ServiceResponse);
+service ServiceAApi {
+  rpc greeting(ServiceRequest) returns (ServiceResponse);
 }
 
-service ServiceB {
-  rpc Process(ServiceRequest) returns (ServiceResponse);
+service ServiceBApi {
+  rpc process(ServiceRequest) returns (ServiceResponse);
 }
 
-service ServiceC {
-  rpc Process(ServiceRequest) returns (ServiceResponse);
+service ServiceCApi {
+  rpc process(ServiceRequest) returns (ServiceResponse);
 }
