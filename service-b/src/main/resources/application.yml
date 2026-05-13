@@ -8,12 +8,12 @@ spring:
 dubbo:
   application:
     name: service-b
-    register-mode: application
     metadataServicePort: ${DUBBO_PORT:20882}
   protocol:
     name: tri
     port: ${DUBBO_PORT:20882}
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
+    register-mode: instance
   scan:
     base-packages: com.example.demo.serviceb.dubbo
