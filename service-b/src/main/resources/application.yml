@@ -9,11 +9,16 @@ dubbo:
   application:
     name: service-b
     metadataServicePort: ${DUBBO_PORT:20882}
+    metadataType: remote
+    service-discovery:
+      migration: FORCE_APPLICATION
   protocol:
     name: tri
     port: ${DUBBO_PORT:20882}
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
-    register-mode: all
+    register-mode: instance
+  metadata-report:
+    address: nacos://${NACOS_ADDR:127.0.0.1:8848}
   scan:
     base-packages: com.example.demo.serviceb.dubbo
