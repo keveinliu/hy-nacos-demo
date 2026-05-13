@@ -21,6 +21,9 @@ USER appuser
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
                -XX:MaxRAMPercentage=75.0 \
                -XX:+UseG1GC \
-               -Djava.security.egd=file:/dev/./urandom"
+               -Djava.security.egd=file:/dev/./urandom \
+               --add-opens java.base/java.lang=ALL-UNNAMED \
+               --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
+               --add-opens java.base/java.util=ALL-UNNAMED"
 
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar $0 \"$@\""]
