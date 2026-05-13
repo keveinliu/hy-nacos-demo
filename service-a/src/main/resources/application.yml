@@ -9,15 +9,11 @@ dubbo:
   application:
     name: service-a
     metadataServicePort: ${DUBBO_PORT:20881}
-    service-discovery:
-      migration: APPLICATION_FIRST
   protocol:
     name: tri
     port: ${DUBBO_PORT:20881}
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
-    register-mode: instance
-  metadata-report:
-    address: nacos://${NACOS_ADDR:127.0.0.1:8848}
+    register-mode: all
   scan:
     base-packages: com.example.demo.servicea.dubbo
