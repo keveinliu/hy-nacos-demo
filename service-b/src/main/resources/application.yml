@@ -8,6 +8,7 @@ spring:
 dubbo:
   application:
     name: service-b
+    register-mode: application
     metadataServicePort: ${DUBBO_PORT:20882}
   protocol:
     name: tri
