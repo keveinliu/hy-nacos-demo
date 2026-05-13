@@ -10,7 +10,7 @@ dubbo:
     name: service-a
     metadataServicePort: ${DUBBO_PORT:20881}
     service-discovery:
-      migration: FORCE_APPLICATION
+      migration: APPLICATION_FIRST
   protocol:
     name: tri
     port: ${DUBBO_PORT:20881}
