@@ -17,5 +17,7 @@ dubbo:
   registry:
     address: nacos://${NACOS_ADDR:127.0.0.1:8848}
     register-mode: instance
+  metadata-report:
+    address: nacos://${NACOS_ADDR:127.0.0.1:8848}
   scan:
     base-packages: com.example.demo.serviceb.dubbo
