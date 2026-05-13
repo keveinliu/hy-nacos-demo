@@ -7,8 +7,8 @@ spring:
 
 logging:
   level:
-    org.apache.dubbo: DEBUG
-    com.example.demo: DEBUG
+    org.apache.dubbo: ${LOG_LEVEL:INFO}
+    com.example.demo: ${LOG_LEVEL:INFO}
 
 dubbo:
   application:

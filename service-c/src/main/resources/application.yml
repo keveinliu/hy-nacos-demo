@@ -5,6 +5,11 @@ spring:
   application:
     name: service-c
 
+logging:
+  level:
+    org.apache.dubbo: ${LOG_LEVEL:INFO}
+    com.example.demo: ${LOG_LEVEL:INFO}
+
 dubbo:
   application:
     name: service-c
