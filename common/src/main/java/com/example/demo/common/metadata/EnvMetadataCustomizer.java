@@ -25,7 +25,7 @@ public class EnvMetadataCustomizer implements ServiceInstanceCustomizer {
     public void customize(ServiceInstance serviceInstance, ApplicationModel applicationModel) {
         String unit = System.getenv("ROUTING_UNIT");
         String idc = System.getenv("ROUTING_IDC");
-        String protocol = "grpc";
+        String protocol = "tri";
 
         if (unit != null && !unit.isEmpty()) {
             serviceInstance.getMetadata().put(UNIT_KEY, unit);
