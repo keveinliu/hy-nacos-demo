@@ -9,6 +9,9 @@ logging:
   level:
     org.apache.dubbo: ${LOG_LEVEL:INFO}
     com.example.demo: ${LOG_LEVEL:INFO}
+    org.apache.dubbo.rpc.protocol.tri: ${LOG_LEVEL:INFO}
+    org.apache.dubbo.registry: ${LOG_LEVEL:INFO}
+    io.grpc: ${LOG_LEVEL:INFO}
 
 dubbo:
   application:
