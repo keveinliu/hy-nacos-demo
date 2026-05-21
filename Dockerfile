@@ -1,14 +1,22 @@
 FROM eclipse-temurin:17-jre
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata \
+RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata net-tools \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && rm -rf /var/lib/apt/lists/* || true
 
+# Install grpcurl for gRPC debugging
+ARG GRPCURL_VERSION=1.9.1
+RUN curl -sSL "https://github.com/fullstorydev/grpcurl/releases/download/v${GRPCURL_VERSION}/grpcurl_${GRPCURL_VERSION}_linux_x86_64.tar.gz" \
+    -o /tmp/grpcurl.tar.gz \
+    && tar -xzf /tmp/grpcurl.tar.gz -C /usr/local/bin grpcurl \
+    && rm /tmp/grpcurl.tar.gz \
+    && chmod +x /usr/local/bin/grpcurl
+
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
-RUN mkdir -p /home/appuser/.dubbo && \
-    chown -R appuser:appgroup /home/appuser/.dubbo
+RUN mkdir -p /home/appuser/.dubbo /home/appuser/nacos/naming && \
+    chown -R appuser:appgroup /home/appuser/.dubbo /home/appuser/nacos
 
 WORKDIR /app
 
